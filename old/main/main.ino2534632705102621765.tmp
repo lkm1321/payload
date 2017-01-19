@@ -1,0 +1,142 @@
+/*
+CSP Satellite Code
+2016
+*/
+
+/*
+ * High-level overview of code:
+ * Main loop
+ *  - Listens for serial input from USB for debugging
+ *  - Listens for data received over RFD
+ *  - Process data in the background
+ */
+
+/* Include libraries */
+#include <TimedAction.h>
+
+/* Define constants for satellite modes */
+#define MODE_INITIATION 0
+#define MODE_SAFE 1
+#define MODE_RECOVERY 2
+#define MODE_STANDBY 3
+#define MODE_PAYLOAD 4
+#define MODE_TRANSMISSION 5
+int mode;
+
+/* Debugging to test timers */
+int internal = 0;
+void toggleInternal(){
+  if (internal == 0) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    internal = 1;
+  } else {
+    digitalWrite(LED_BUILTIN, LOW);
+    internal = 0;
+  }
+}
+
+int external = 0;
+int externalPin = 22;
+void toggleExternal() {
+  if (external == 0) {
+    digitalWrite(externalPin, HIGH);
+    external = 1;
+  } else {
+    digitalWrite(externalPin, LOW);
+    external = 0;
+  }
+}
+
+// Holds flag to initiate command processing
+int serialCommandAvailable = false;
+// Stores a single input character
+char input;
+// Stores the total command
+String command = "";
+void serialInterface() {
+  // Check if there is a command to execute
+  if (serialCommandAvailable) {
+    SerialUSB.println(command);
+    // Execute the command
+    if (command == "START-TRANSMITTER") {
+    } else if (command == "STOP-TRANSMITTER") {
+    } else if (command == "DELETE-DATA") {
+    } else if (command == "MODE-SAFE") {
+      mode = MODE_SAFE;
+    } else if (command == "MODE-RECOVERY") {
+      mode = MODE_RECOVERY;
+    } else if (command == "MODE-STANDBY") {
+      mode = MODE_STANDBY;
+    } else if (command == "MODE-PAYLOAD") {
+      mode = MODE_PAYLOAD;
+    } else if (command == "MODE-TRANSMISSION") {
+      mode = MODE_TRANSMISSION;
+    } else {
+      // Invalid command
+      SerialUSB.println("Invalid command");
+    }
+    // Reset the flag
+    serialCommandAvailable = false;
+    command = "";
+  // If there isn't a command to execute, read commands
+  } else {
+    // Check if there is data to read
+    while (SerialUSB.available() > 0 && !serialCommandAvailable) {
+      // Get a single character
+      input = SerialUSB.read();
+      // Check for newline
+      if (input == '\n') {
+        serialCommandAvailable = true;
+      } else {
+        command = command + input;
+      }
+    }
+  }
+}
+
+
+//create a couple timers that will fire repeatedly every x ms
+TimedAction internalThread = TimedAction(1000, toggleInternal);
+TimedAction externalThread = TimedAction(2000, toggleExternal);
+// Check serial buffer once every second
+TimedAction serialThread = TimedAction(1000, serialInterface);
+
+void setup() {
+  /* Place the satellite in initiation mode */
+  mode = MODE_INITIATION;
+  /* Place the satellite into standby mode */
+  mode = MODE_STANDBY;
+  /* Initialise the serial interface */
+  SerialUSB.begin(9600);
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(externalPin, OUTPUT);
+}
+
+
+void loop() {
+  /* Execute code depending on the satellite mode */
+  switch(mode) {
+    case MODE_INITIATION:
+      break;
+    case MODE_SAFE:
+      break;
+    case MODE_RECOVERY:
+      break;
+    case MODE_STANDBY:
+      break;
+    case MODE_PAYLOAD:
+      break;
+    case MODE_TRANSMISSION:
+      break;
+    default:
+      break;
+  }
+  //check on our threads. based on how long the system has been
+  //running, do they need to fire and do work? if so, do it!
+  internalThread.check();
+  externalThread.check();
+  serialThread.check();
+}
+
+
+

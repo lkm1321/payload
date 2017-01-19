@@ -1,0 +1,29 @@
+Overall, great job. I was quite impressed by the neatness of it. 
+
+Few points: 
+
+1. Ensure thoroughly that 3.3V-1 and 3.3V-2 are the +ve and -ve sides from current sensor. Possibly a confusing name.
+	- 3.3V-1 is the current going into the sensor (unmeasured), 3.3V-2 is the current going out (being measured)
+2. Powering motor from 3.3V might not be good. Better to power from raw battery voltage							
+	- ***To do
+3. The H-bridge driver doesn't work the same way as ESC. If you want to use your brushless, choose own part.
+	- Not using brushless
+4. Which SD card module did you assume? We don't have the Adafruit one at the moment and it will take a fair bit of time to get one.
+	- Assumed Adafruit, I beleive
+5. What does the PNP transistor circuit do? 
+	- No clue
+5-2. LM324 is the quad op-amp, and LM358 is the dual op-amp, both same thing. Consider using LM358 for less space. 
+	- ***To do
+6. Part number of U$1 on PAYLOAD and availability? 				
+	U$1 is the CCD payload and is being delivered
+7. Why the two headers? Are you trying to make it seem like a PC104 bus? 
+	- *** zz Alan to answer this one idk
+8. You may want to feed RFD-TX and RFD-RX to Tx0 and Rx0. That way, your arduino code can access it as Serial
+	- TX0 and RX0 are connected to the Serial monitor which may make coding easier, but we can't control the Serial monitor anymore if we take that one. We can still send commands and read back data through the other serial ports and print to console as needed?
+9. Add pull-up resistors to 5-SHDN and 3.3-SHDN if you do want to control it. To my memory, it's a low-active pin.
+	- The documentation says it's a high-active pin: "The SHDN pin can be driven low (under 0.4 V) to power down the regulator and put it in a low-power state. The quiescent current in this sleep mode is dominated by the current in the 100k pull-up resistor from SHDN to VIN. With SHDN held low, this resistor will draw 10 µA per volt on VIN (for example, the sleep current with a 5 V input will be 50 µA). The SHDN pin can be driven high (above 1.2 V) to enable the board, or it can be connected to VIN or left disconnected if you want to leave the board permanently enabled."
+10. Produce a pin map for the 20x2 header. Compare with every design. 
+	- We have it on Googel Docs
+11. Consider adding bolt holes for components. In Tutorial-Pack on BB, there's a lbr file for RFD900 with bolt holes on it (tried and tested). 
+	- *** To do
+

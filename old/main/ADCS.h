@@ -1,0 +1,2 @@
+void ADCSSetup();
+void ADCSControl();
